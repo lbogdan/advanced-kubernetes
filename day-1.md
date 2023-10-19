@@ -500,7 +500,7 @@ ssh lbogdan-cp-0 lsblk
 # sr0      11:0    1    2K  0 rom
 ```
 
-Now edit `manifests/rook-ceph/cephcluster.yaml` and under `nodes` replace `name: $CP_NAME` with your control plane name (⚠️VERY IMPORTANT⚠️), apply it, and watch the `rook-ceph-operator` pod's logs and the `rook-ceph` namespace for new pods. Wait until the cluster is `Ready`:
+Now edit `manifests/rook-ceph/cephcluster.yaml` and under `nodes` replace `name: $CP_NAME` with your control plane name, e.g. `lbogdan-cp-0` (⚠️VERY IMPORTANT⚠️), apply it, and watch the `rook-ceph-operator` pod's logs and the `rook-ceph` namespace for new pods. Wait until the cluster is `Ready`:
 
 ```sh
 kubectl -n rook-ceph get cephcluster
