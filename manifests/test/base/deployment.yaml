@@ -11,12 +11,12 @@ spec:
       containers:
       - image: gcr.io/kuar-demo/kuard-amd64:blue
         name: kuard-amd64
-        volumeMounts:
-        - name: data
-          mountPath: /data
+        # volumeMounts:
+        # - name: data
+        #   mountPath: /data
       securityContext:
         fsGroup: 65534
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: test
+      # volumes:
+      # - name: data
+      #   persistentVolumeClaim:
+      #     claimName: test

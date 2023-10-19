@@ -562,16 +562,3 @@ Restart the pod and check that the file is persisted.
 ## Task 9
 
 Create an ingress to expose the Ceph dashboard service `rook-ceph/rook-ceph-mgr-dashboard`. To login, see [Login Credentials](https://rook.io/docs/rook/v1.12/Storage-Configuration/Monitoring/ceph-dashboard/?h=dashboard#login-credentials).
-
-
-TODO:
-
-- [ ] print lista prezenta
-- [ ] put everything in a new repo
-- [ ] update `test/ingress-patch[-tls].json` with `$HOST`
-- [ ] update `manifests/clusterissuer` with `$EMAIL`
-- [ ] update `manifests/rook-ceph/cephcluster.yaml` with `$CP_NAME`
-- [ ] update `test/base/ingress.yaml` - comment out TLS
-<!-- - [ ] comment out `test/base/pvc.yaml` -->
-- [ ] update `test/base/kustomization.yaml` - comment out `- pvc.yaml`
-- [ ] comment out volumes in `test/base/deployment.yaml`

@@ -16,6 +16,6 @@ controller:
   service:
     enabled: false
   extraArgs:
-    publish-status-address: 37.27.0.62
+    publish-status-address: $CP_IP
   priorityClassName: system-cluster-critical
   allowSnippetAnnotations: true

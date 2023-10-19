@@ -8,7 +8,7 @@ resources:
 #   foo: bar
 
 patches:
-- path: ingress-patch-tls.json
+- path: ingress-patch.json
   target:
     group: networking.k8s.io
     version: v1
