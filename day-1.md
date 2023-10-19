@@ -2,6 +2,10 @@
 
 You will each have access to two servers, one for the control plane, and one for the worker node. They have all Kubernetes prerequisites (`cri-o` container runtime, `kubeadm`, `kubelet`, `kubectl`, other required packages and kernel configurations etc.), but Kubernetes is not yet initialized. So the first step will be to initialize it on the control plane node, and then join the worker node.
 
+> **Note**
+>
+> You can find a SSH config file [here](https://gist.github.com/lbogdan/351bd9508f6c6d7e81d04fcad92717f1).
+
 ## Task #1
 
 Initialize Kubernetes on the control plane node using [`kubeadm init`](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/).
