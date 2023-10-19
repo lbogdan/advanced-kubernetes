@@ -6,7 +6,7 @@ You will each have access to two servers, one for the control plane, and one for
 >
 > You can find a SSH config file [here](https://gist.github.com/lbogdan/351bd9508f6c6d7e81d04fcad92717f1).
 
-## Task #1
+## Task 1
 
 Initialize Kubernetes on the control plane node using [`kubeadm init`](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/).
 
@@ -300,7 +300,7 @@ kubectl auth whoami
 
 Getting back to the [`kubelet` serving certificate](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/#kubelet-serving-certs), we'll install [`kubelet-csr-approver`](https://github.com/postfinance/kubelet-csr-approver) next, which will automatically approve `kubelet` CSRs.
 
-## Task #5
+## Task 5
 
 Install `kubelet-csr-approver` from the [Helm chart](https://github.com/postfinance/kubelet-csr-approver#helm-install) into the `kube-system` namespace, using the values from `manifests/helm/kubelet-csr-approver-values.yaml`.
 
@@ -346,7 +346,7 @@ kubectl -n kube-system logs kube-proxy-ld7c5
 
 Next thing we'll install is [`metrics-server`](https://github.com/kubernetes-sigs/metrics-server), see [https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/](Resource metrics pipeline).
 
-## Task #5
+## Task 6
 
 Install `metrics-server` from the [Helm chart](https://artifacthub.io/packages/helm/metrics-server/metrics-server) into the `kube-system` namespace, using the default values.
 
@@ -414,7 +414,7 @@ curl http://test.37.27.0.62.nip.io/
 
 That's expected, as we don't have any ingress controller running in the cluster yet.
 
-## Task 6
+## Task 7
 
 Install `ingress-nginx` from the [Helm chart](https://kubernetes.github.io/ingress-nginx/deploy/#quick-start) into a new `ingress-nginx` namespace, using the values from `manifests/helm/ingress-nginx-values.yaml`.
 
@@ -463,7 +463,7 @@ If we now refresh the browser, we'll get redirected to the `https://` URL, but w
 
 In order to fix this, let's next install [`cert-manager`](https://cert-manager.io/), which will auto-generate (and renew) valid certificates using [Let's Encrypt](https://letsencrypt.org/).
 
-## Task 7
+## Task 8
 
 Install `cert-manager` from the [Helm chart](https://cert-manager.io/docs/installation/helm/) into a new `cert-manager` namespace, using the values from `manifests/helm/cert-manager-values.yaml`.
 
@@ -490,7 +490,7 @@ Now you if we refresh, we should be able to access the application over HTTPS.
 
 The only thing we still need to have a functional cluster is storage, so let's add that next! We'll use [Rook](https://rook.io/), which is a Kubernetes operator for the distributed storage system [Ceph](https://ceph.io/en/) and a CSI storage plugin.
 
-## Task 8
+## Task 9
 
 First, install the `rook-ceph` operator from the [Helm chart](https://rook.io/docs/rook/v1.12/Helm-Charts/operator-chart/) into a new `rook-ceph` namespace, using the values from `manifests/helm/rook-ceph-values.yaml`.
 
@@ -563,6 +563,6 @@ Check that you can access the file at `https://test.37.27.0.62.nip.io/fs/data/ra
 
 Restart the pod and check that the file is persisted.
 
-## Task 9
+## Task 10
 
 Create an ingress to expose the Ceph dashboard service `rook-ceph/rook-ceph-mgr-dashboard`. To login, see [Login Credentials](https://rook.io/docs/rook/v1.12/Storage-Configuration/Monitoring/ceph-dashboard/?h=dashboard#login-credentials).
