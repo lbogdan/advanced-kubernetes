@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+      - image: gcr.io/kuar-demo/kuard-amd64:blue
+        name: kuard-amd64
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      securityContext:
+        fsGroup: 65534
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: test

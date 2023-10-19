@@ -1,0 +1,21 @@
+controller:
+  hostPort:
+    enabled: true
+  kind: DaemonSet
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+  tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+  service:
+    enabled: false
+  extraArgs:
+    publish-status-address: 37.27.0.62
+  priorityClassName: system-cluster-critical
+  allowSnippetAnnotations: true

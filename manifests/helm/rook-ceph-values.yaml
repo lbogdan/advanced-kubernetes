@@ -1,0 +1,13 @@
+csi:
+  enableCephfsDriver: false
+  enableCephfsSnapshotter: false
+  enableNFSSnapshotter: false
+  enableRBDSnapshotter: false
+  provisionerReplicas: 1
+  provisionerTolerations:
+  - operator: Exists
+    effect: NoSchedule
+  provisionerNodeAffinity: node-role.kubernetes.io/control-plane=
+  pluginTolerations:
+  - operator: Exists
+    effect: NoSchedule

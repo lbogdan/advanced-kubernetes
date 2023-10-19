@@ -1,0 +1,17 @@
+[
+  {
+    "op": "replace",
+    "path": "/spec/rules/0/host",
+    "value": "test.37.27.0.62.nip.io"
+  },
+  {
+    "op": "replace",
+    "path": "/spec/tls/0/hosts/0",
+    "value": "test.37.27.0.62.nip.io"
+  },
+  {
+    "op": "replace",
+    "path": "/spec/tls/0/secretName",
+    "value": "test.37.27.0.62.nip.io-tls"
+  }
+]
