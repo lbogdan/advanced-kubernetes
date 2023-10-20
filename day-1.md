@@ -344,7 +344,7 @@ kubectl -n kube-system logs kube-proxy-ld7c5
 # [...]
 ```
 
-Next thing we'll install is [`metrics-server`](https://github.com/kubernetes-sigs/metrics-server), see [https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/](Resource metrics pipeline).
+Next thing we'll install is [`metrics-server`](https://github.com/kubernetes-sigs/metrics-server), see (Resource metrics pipeline)[https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/].
 
 ## Task 6
 
