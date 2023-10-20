@@ -1,0 +1,5 @@
+config:
+  logLevel: info
+  receivers:
+  - name: dump
+    stdout: {}
