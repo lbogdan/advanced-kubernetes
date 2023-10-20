@@ -231,3 +231,174 @@ argocd login --grpc-web --insecure --username admin --password $(kubectl -n argo
 # 'admin:login' logged in successfully
 # Context 'argocd.37.27.0.62.nip.io' updated
 ```
+
+Manually create some application resources (make sure to replace `$CP_IP` with your control plane IP address):
+
+```sh
+cat <<EOT >metrics-server-app.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+  namespace: argocd
+spec:
+  destination:
+    namespace: kube-system
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: metrics-server
+    repoURL: https://kubernetes-sigs.github.io/metrics-server/
+    targetRevision: 3.11.0
+EOT
+kubectl apply -f metrics-server-app.yaml
+```
+
+```sh
+cat <<EOT >ingress-nginx-app.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingress-nginx
+  namespace: argocd
+spec:
+  destination:
+    namespace: ingress-nginx
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: ingress-nginx
+    helm:
+      values: |
+        controller:
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
+          extraArgs:
+            publish-status-address: $CP_IP
+          hostPort:
+            enabled: true
+          kind: DaemonSet
+          priorityClassName: system-cluster-critical
+          service:
+            enabled: false
+          tolerations:
+          - effect: NoSchedule
+            key: node-role.kubernetes.io/control-plane
+            operator: Exists
+    repoURL: https://kubernetes.github.io/ingress-nginx
+    targetRevision: 4.8.2
+EOT
+kubectl apply -f ingress-nginx-app.yaml
+```
+
+List the apps:
+
+```sh
+kubectl -n argocd get app
+# NAME             SYNC STATUS   HEALTH STATUS
+# ingress-nginx    OutOfSync     Healthy
+# metrics-server   OutOfSync     Healthy
+argocd app list
+# NAME                   CLUSTER                         NAMESPACE      PROJECT  STATUS     HEALTH   SYNCPOLICY  CONDITIONS  REPO                                               PATH  TARGET
+# argocd/ingress-nginx   https://kubernetes.default.svc  ingress-nginx  default  OutOfSync  Healthy  <none>      <none>      https://kubernetes.github.io/ingress-nginx               4.8.2
+# argocd/metrics-server  https://kubernetes.default.svc  kube-system    default  OutOfSync     Healthy  <none>      <none>      https://kubernetes-sigs.github.io/metrics-server/        3.11.0
+```
+
+They are out of sync, look at the diffs:
+
+```sh
+argocd app diff metrics-server
+#
+# ===== /Service kube-system/metrics-server ======
+# 11a12
+# >     argocd.argoproj.io/instance: metrics-server
+#
+# ===== /ServiceAccount kube-system/metrics-server ======
+# 11a12
+# >     argocd.argoproj.io/instance: metrics-server
+# [...]
+```
+
+Let's sync them:
+
+```sh
+argocd app sync metrics-server
+# TIMESTAMP                  GROUP                            KIND           NAMESPACE                   NAME                       STATUS    HEALTH        HOOK  MESSAGE
+# 2023-10-20T13:16:31+03:00                                Service          kube-system        metrics-server                     OutOfSync  Healthy
+# [...]
+# Message:            successfully synced (all tasks run)
+# [...]
+```
+
+List the apps again, they should now be synced:
+
+```sh
+kubectl -n argocd get app
+# NAME             SYNC STATUS   HEALTH STATUS
+# ingress-nginx    OutOfSync     Healthy
+# metrics-server   Synced        Healthy
+argocd app list
+# NAME                   CLUSTER                         NAMESPACE      PROJECT  STATUS     HEALTH   SYNCPOLICY  CONDITIONS  REPO                                               PATH  TARGET
+# argocd/ingress-nginx   https://kubernetes.default.svc  ingress-nginx  default  Synced  Healthy  <none>      <none>      https://kubernetes.github.io/ingress-nginx               4.8.2
+# argocd/metrics-server  https://kubernetes.default.svc  kube-system    default  Synced     Healthy  <none>      <none>      https://kubernetes-sigs.github.io/metrics-server/        3.11.0
+```
+
+Now let's version all this inside a git repository.
+
+Create a GitHub (or similar) git repository. Create an `infra` folder at the root, and inside it, three files:
+
+```
+infra
+  - kustomization.yaml
+  - metrics-server-app.yaml
+  - ingress-nginx-app-yaml
+```
+
+The `kustomization.yaml` contents should be:
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- metrics-server-app.yaml
+- ingress-nginx-app.yaml
+```
+
+Add your repository to ArgoCD (⚠️replace `$GIT_REPO_URL` with your repository URL):
+
+```sh
+argocd repo add $GIT_REPO_URL
+# Repository 'https://github.com/lbogdan/gitops-test.git' added
+```
+
+Now we create an application from that folder (⚠️again, make sure to replace `$GIT_REPO_URL` with your repository):
+
+```sh
+cat <<EOT >infra-app.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infra
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: infra
+    repoURL: $GIT_REPO_URL
+EOT
+kubectl apply -f infra-app.yaml
+```
+
+Go to the UI and sync it.
+
+## Task 18
+
+Define all the components that we installed in the cluster so far in the git repository, and sync them to the cluster.
